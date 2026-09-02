@@ -1,0 +1,30 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Env / secrets
+.env
+.env.*
+*.key
+*.pem
+secrets/
+
+# Logs / temp
+*.log
+*.tmp
+tmp/
+temp/
+
+# Generated output
+output/
+outputs/
+
+# Archives
+*.zip
