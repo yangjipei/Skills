@@ -1,0 +1,6 @@
+interface:
+  display_name: "业务流程 HTML"
+  short_description: "将复杂业务流程转换为阶段清晰、规则可折叠的单文件 HTML"
+  default_prompt: "使用 $business-flow-html 将当前复杂业务流程生成到需求目录的 flows/；工作稿放入 flows/workdraft/。"
+policy:
+  allow_implicit_invocation: true

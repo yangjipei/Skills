@@ -1,0 +1,10 @@
+{
+  "existing_4_skills_business_logic_changed": false,
+  "changes_in_this_version": [
+    "Updated skills/_shared-wiki/WIKI_RULES.md with explicit no-auto-modify boundary",
+    "Added skills/skill-evolution-review/SKILL.md",
+    "Added skills/skill-evolution-review/README.md"
+  ],
+  "manual_trigger_only": true,
+  "default_behavior": "recommend_only"
+}

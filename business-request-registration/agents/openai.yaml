@@ -1,0 +1,6 @@
+interface:
+  display_name: "业务诉求登记"
+  short_description: "围绕单一主题讨论业务诉求，共同确认处理结论并建立标准登记文档"
+  default_prompt: "使用 $business-request-registration 与我讨论这条业务诉求，共同确认处理结论后完成登记。"
+policy:
+  allow_implicit_invocation: true

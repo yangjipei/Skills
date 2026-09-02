@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>多轮催收作业策略 · 业务流程示例</title>
+  <style>
+    :root{
+      --bg:#f5f7fa;
+      --surface:#fff;
+      --text:#1f2937;
+      --muted:#7b8494;
+      --line:#e5e9ef;
+      --primary:#1677ff;
+      --primary-soft:#eef5ff;
+      --green:#1f9d62;
+      --green-soft:#eefaf4;
+      --orange:#d98518;
+      --orange-soft:#fff8ea;
+      --red:#d94f4f;
+      --red-soft:#fff1f1;
+      --radius:12px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    }
+    .page{max-width:1380px;margin:0 auto;padding:28px}
+    .hero{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:18px}
+    h1{margin:0 0 8px;font-size:28px}
+    .subtitle{color:var(--muted);max-width:860px}
+    .legend{display:flex;gap:10px;flex-wrap:wrap}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;background:#fff;border:1px solid var(--line);color:#596273;font-size:12px}
+    .badge i{width:8px;height:8px;border-radius:50%;display:inline-block}
+    .mainline{
+      display:grid;
+      grid-template-columns:repeat(6,1fr);
+      gap:28px;
+      margin:22px 0 26px;
+    }
+    .step{
+      position:relative;
+      background:var(--surface);
+      border:1px solid var(--line);
+      border-radius:10px;
+      padding:14px 14px 16px;
+      min-height:90px;
+    }
+    .step:not(:last-child):after{
+      content:"➜";
+      position:absolute;
+      right:-27px;
+      top:28px;
+      z-index:2;
+      color:var(--primary);
+      font-size:26px;
+      font-weight:900;
+      width:26px;
+      text-align:center;
+    }
+    .step-no{font-size:12px;color:var(--primary);font-weight:700;margin-bottom:4px}
+    .step-title{font-size:16px;font-weight:700}
+    .step-desc{font-size:12px;color:var(--muted);margin-top:4px}
+    .stage{
+      background:var(--surface);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      margin-bottom:18px;
+      overflow:hidden;
+    }
+    .stage-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:16px 20px;
+      border-bottom:1px solid var(--line);
+      background:#fbfcfe;
+    }
+    .stage-title{display:flex;align-items:center;gap:12px;font-size:17px;font-weight:700}
+    .stage-index{
+      display:inline-flex;
+      width:28px;height:28px;
+      border-radius:50%;
+      align-items:center;justify-content:center;
+      background:var(--primary);color:#fff;font-weight:700;font-size:12px
+    }
+    .stage-note{font-size:12px;color:var(--muted)}
+    .stage-body{padding:20px}
+    .flow{
+      display:grid;
+      grid-template-columns:repeat(7,minmax(130px,1fr));
+      gap:28px;
+      align-items:start;
+    }
+    .node{
+      position:relative;
+      border:1px solid var(--line);
+      border-radius:9px;
+      padding:12px 13px;
+      background:#fff;
+      min-height:72px;
+    }
+    .node:not(:last-child):after{
+      content:"→";
+      position:absolute;
+      right:-27px;
+      top:19px;
+      color:var(--primary);
+      font-size:22px;
+      font-weight:500;
+    }
+    .node strong{display:block;margin-bottom:4px}
+    .node small{display:block;color:var(--muted)}
+    .decision{border-color:#cfdaf0;background:#f9fbff}
+    .success{border-color:#cce7d8;background:var(--green-soft)}
+    .warn{border-color:#eed8ad;background:var(--orange-soft)}
+    .danger{border-color:#efcaca;background:var(--red-soft)}
+    .branch-grid{
+      display:grid;
+      grid-template-columns:220px 1fr;
+      gap:18px;
+      align-items:start;
+    }
+    .decision-card{
+      border:1px solid #cfdaf0;
+      background:#f9fbff;
+      border-radius:10px;
+      padding:14px;
+      text-align:center;
+      font-weight:700;
+    }
+    .branches{display:grid;gap:10px}
+    .branch{
+      display:grid;
+      grid-template-columns:56px 1fr;
+      gap:10px;
+      align-items:start;
+    }
+    .yn{
+      border-radius:8px;
+      padding:8px 6px;
+      text-align:center;
+      font-weight:700;
+      font-size:12px;
+      background:#eef5ff;color:#2666b6
+    }
+    .yn.no{background:#f4f5f7;color:#6e7684}
+    .branch-content{
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:10px 12px;
+      background:#fff;
+    }
+    .mini-seq{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .mini{
+      padding:7px 9px;
+      border:1px solid var(--line);
+      border-radius:7px;
+      background:#fff;
+    }
+    .arrow{color:#a9b1bd}
+    .rule-box{
+      margin-top:14px;
+      padding:11px 13px;
+      border-radius:8px;
+      background:#f7f9fc;
+      border:1px dashed #d9dee7;
+      color:#5f6877;
+      font-size:12px;
+    }
+
+    .decision-flow{display:grid;gap:14px}
+    .decision-row{
+      display:grid;
+      grid-template-columns:220px 50px 1fr;
+      gap:12px;
+      align-items:center;
+    }
+    .decision-arrow{
+      text-align:center;
+      color:var(--primary);
+      font-size:22px;
+      font-weight:700;
+    }
+    .decision-branches{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    .branch-box{
+      position:relative;
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:10px 12px;
+      background:#fff;
+      min-height:58px;
+    }
+    .branch-box.yes{border-color:#bfe0cc;background:var(--green-soft)}
+    .branch-box.no{border-color:#e1e5eb;background:#f8f9fb}
+    .branch-label{
+      display:inline-flex;
+      min-width:34px;
+      justify-content:center;
+      margin-right:8px;
+      padding:2px 7px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:700;
+      background:#eef5ff;
+      color:#2666b6;
+    }
+    .branch-box.yes .branch-label{background:#dff3e7;color:#277046}
+    .branch-box.no .branch-label{background:#eceff3;color:#667085}
+    .down-arrow{
+      text-align:center;
+      color:var(--primary);
+      font-size:30px;
+      font-weight:900;
+      line-height:1;
+      margin:-3px 0;
+    }
+
+
+    .stage-toggle{
+      border:0;background:transparent;color:var(--primary);
+      font-size:12px;cursor:pointer;padding:4px 0;
+    }
+    .flow-controls{
+      display:flex;justify-content:flex-end;gap:8px;margin:0 0 12px
+    }
+    .flow-controls-label{
+      align-self:center;color:var(--muted);font-size:12px;margin-right:2px
+    }
+    .flow-control{
+      border:1px solid var(--line);background:var(--surface);color:var(--primary);
+      border-radius:8px;font-size:12px;cursor:pointer;padding:6px 12px
+    }
+    .flow-control:hover{background:var(--primary-soft);border-color:#cfdaf0}
+    .flow-control:focus-visible,.stage-toggle:focus-visible,.rule-toggle:focus-visible{
+      outline:2px solid var(--primary);outline-offset:2px
+    }
+    .stage.collapsed .stage-body{display:none}
+    .stage.collapsed .stage-head{border-bottom:0}
+    .stage-meta{
+      display:flex;align-items:center;gap:14px;flex-wrap:wrap
+    }
+    .stage-summary{
+      color:var(--muted);font-size:12px
+    }
+    .rule-panel{
+      margin-top:14px;border-top:1px dashed #d9dee7;padding-top:12px
+    }
+    .rule-toggle{
+      border:0;background:transparent;color:var(--primary);
+      font-size:12px;padding:0;cursor:pointer
+    }
+    .rule-detail{
+      margin-top:8px;padding:10px 12px;border-radius:8px;
+      background:#f7f9fc;color:#5f6877;font-size:12px
+    }
+    .key-path{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:3px 8px;border-radius:999px;
+      background:#eef5ff;color:#2666b6;font-size:11px;font-weight:600
+    }
+    .end-state{
+      display:inline-flex;align-items:center;justify-content:center;
+      min-width:86px;padding:7px 10px;border-radius:8px;font-weight:700
+    }
+    .end-state.ok{background:var(--green-soft);color:#277046}
+    .end-state.stop{background:var(--red-soft);color:#a53e3e}
+    .decision-stack{display:grid;gap:12px}
+    .decision-block{
+      border:1px solid #cfdaf0;background:#f9fbff;border-radius:10px;padding:12px 14px
+    }
+    .decision-question{font-weight:700;margin-bottom:8px}
+    .decision-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .decision-option{
+      border:1px solid var(--line);border-radius:8px;padding:9px 10px;background:#fff
+    }
+    .decision-option.yes{border-color:#bfe0cc;background:var(--green-soft)}
+    .decision-option.no{border-color:#e1e5eb;background:#f8f9fb}
+    .connector{
+      text-align:center;color:var(--primary);font-size:24px;font-weight:700;line-height:1
+    }
+
+    .footer-note{
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+      padding:8px 0 18px;
+    }
+    @media(max-width:1100px){
+      .mainline,.flow{grid-template-columns:1fr;gap:34px}
+      .step:not(:last-child):after{
+        content:"⬇";
+        right:auto;
+        left:calc(50% - 13px);
+        top:auto;
+        bottom:-31px;
+      }
+      .node:not(:last-child):after{
+        content:"↓";
+        right:auto;
+        left:calc(50% - 11px);
+        top:auto;
+        bottom:-29px;
+      }
+    }
+    @media(max-width:700px){
+      .page{padding:16px}
+      .hero{display:block}
+      .branch-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="hero">
+    <div>
+      <h1>多轮催收作业策略 · 业务流程</h1>
+      <div class="subtitle">
+        将主流程拆为 6 个阶段，通过阶段分组收敛复杂度；保留关键箭头和必要 Yes / No 分支，将规则与异常细节折叠到阶段内部。
+      </div>
+    </div>
+    <div class="legend">
+      <span class="badge"><i style="background:#1677ff"></i>主流程</span>
+      <span class="badge"><i style="background:#1f9d62"></i>正常结束</span>
+      <span class="badge"><i style="background:#d98518"></i>等待/异常</span>
+      <span class="badge"><i style="background:#d94f4f"></i>作废/终止</span>
+    </div>
+  </div>
+
+  <div class="flow-controls" aria-label="阶段内容显示控制">
+    <span class="flow-controls-label">阶段内容</span>
+    <button class="flow-control" id="expand-all" type="button">全部展开</button>
+    <button class="flow-control" id="collapse-all" type="button">全部收起</button>
+  </div>
+
+  <section class="mainline">
+    <div class="step"><div class="step-no">01</div><div class="step-title">日实例启动</div><div class="step-desc">快照、结清过滤、策略匹配</div></div>
+    <div class="step"><div class="step-no">02</div><div class="step-title">首轮执行</div><div class="step-desc">号码选择、按坐席建任务</div></div>
+    <div class="step"><div class="step-no">03</div><div class="step-title">结果与分支</div><div class="step-desc">结果映射、有效结果、分支命中</div></div>
+    <div class="step"><div class="step-no">04</div><div class="step-title">下一轮投递</div><div class="step-desc">待投递池、成批/等待触发</div></div>
+    <div class="step"><div class="step-no">05</div><div class="step-title">轮次收口</div><div class="step-desc">入口关闭、完成度阈值</div></div>
+    <div class="step"><div class="step-no">06</div><div class="step-title">日切</div><div class="step-desc">截止、暂停、当日作废</div></div>
+  </section>
+  <div class="down-arrow">⬇</div>
+
+  <section class="stage">
+    <div class="stage-head">
+      <div class="stage-title"><span class="stage-index">1</span>日实例启动</div>
+      <div class="stage-meta">
+        <div class="stage-note">到达 Group 作业开始时间</div>
+        <button class="stage-toggle" type="button">收起</button>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="flow">
+        <div class="node"><strong>读取分案快照</strong><small>case_id / Group / 坐席 / 产品 / 标签</small></div>
+        <div class="node decision"><strong>剔除结清案件</strong><small>剔除已结清案件</small></div>
+        <div class="node"><strong>策略条件筛选</strong><small>多策略命中取最高优先级</small></div>
+        <div class="node"><strong>确定唯一策略</strong><small>确定唯一策略</small></div>
+        <div class="node"><strong>选择任务号码</strong><small>选取本轮唯一任务号码</small></div>
+        <div class="node success"><strong>生成首轮待投递</strong><small>按策略实例 + Round 1</small></div>
+      </div>
+    </div>
+  </section>
+  <div class="down-arrow">⬇</div>
+
+  <section class="stage">
+    <div class="stage-head">
+      <div class="stage-title"><span class="stage-index">2</span>首轮执行</div>
+      <div class="stage-meta">
+        <div class="stage-note">首轮名单确定后立即关闭首轮入口</div>
+        <button class="stage-toggle" type="button">收起</button>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="flow">
+        <div class="node"><strong>按坐席分组</strong><small>每个坐席生成独立工具任务</small></div>
+        <div class="node"><strong>检查当日占用</strong><small>阻止同案件重复自动触达</small></div>
+        <div class="node decision"><strong>是否可投递？</strong><small>无未结束渠道任务占用</small></div>
+        <div class="node success"><strong>创建工具任务</strong><small>保存本地批次 / 外部 task_id</small></div>
+        <div class="node warn"><strong>不可投递则等待</strong><small>占用释放后继续；超时作废</small></div>
+      </div>
+    </div>
+  </section>
+  <div class="down-arrow">⬇</div>
+
+  <section class="stage">
+    <div class="stage-head">
+      <div class="stage-title"><span class="stage-index">3</span>结果处理与分支流转</div>
+      <div class="stage-meta">
+        <div class="stage-note">每个案件每轮只接受第一个有效结果</div>
+        <button class="stage-toggle" type="button">收起</button>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="decision-stack">
+        <div class="decision-block">
+          <div class="decision-question">① 原始结果能否映射为标准结果？</div>
+          <div class="decision-options">
+            <div class="decision-option no"><strong>否</strong><br>保存原始结果 → 记录未映射异常 → 等待后续有效结果</div>
+            <div class="decision-option yes"><strong>是</strong><br>进入首个有效结果判断</div>
+          </div>
+        </div>
+
+        <div class="connector">↓</div>
+
+        <div class="decision-block">
+          <div class="decision-question">② 是否为本轮首个有效结果？</div>
+          <div class="decision-options">
+            <div class="decision-option no"><strong>否</strong><br>仅保存重复结果，不重复流转</div>
+            <div class="decision-option yes"><strong>是</strong><br>继续校验案件状态</div>
+          </div>
+        </div>
+
+        <div class="connector">↓</div>
+
+        <div class="decision-block">
+          <div class="decision-question">③ 案件是否未结清？</div>
+          <div class="decision-options">
+            <div class="decision-option no"><strong>否</strong><br><span class="end-state ok">结束案件流程</span></div>
+            <div class="decision-option yes"><strong>是</strong><br>继续按分支优先级判断</div>
+          </div>
+        </div>
+
+        <div class="connector">↓</div>
+
+        <div class="decision-block">
+          <div class="decision-question">④ 是否命中后续分支？</div>
+          <div class="decision-options">
+            <div class="decision-option no"><strong>否</strong><br><span class="end-state ok">流程结束</span></div>
+            <div class="decision-option yes"><strong>是</strong><br><span class="key-path">进入目标 Round 待投递池</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rule-panel">
+        <button class="rule-toggle" type="button">展开规则说明</button>
+        <div class="rule-detail" hidden>分支条件可使用标准结果码、客户关系和案件业务维度；跨字段为 AND，同字段多值为 OR；每个案件只进入一个后续分支。</div>
+      </div>
+</div>
+  </section>
+  <div class="down-arrow">⬇</div>
+
+  <section class="stage">
+    <div class="stage-head">
+      <div class="stage-title"><span class="stage-index">4</span>下一轮滚动投递</div>
+      <div class="stage-meta">
+        <div class="stage-note">非首轮按“策略实例 + 轮次 + 坐席”独立成批</div>
+        <button class="stage-toggle" type="button">收起</button>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="flow">
+        <div class="node"><strong>命中下一轮</strong><small>案件进入目标 Round</small></div>
+        <div class="node decision"><strong>上一轮已停止触达？</strong><small>完成 / 终止 / 失败后释放占用</small></div>
+        <div class="node"><strong>进入待投递池</strong><small>首条案件进入时开始计时</small></div>
+        <div class="node decision"><strong>满足投递条件？</strong><small>成批数或等待时间任一满足</small></div>
+        <div class="node success"><strong>按坐席生成新批次</strong><small>投递后重置等待计时</small></div>
+        <div class="node warn"><strong>未满足则继续等待</strong><small>直到成批、超时或末次投递</small></div>
+      </div>
+    </div>
+  </section>
+  <div class="down-arrow">⬇</div>
+
+  <section class="stage">
+    <div class="stage-head">
+      <div class="stage-title"><span class="stage-index">5</span>轮次收口</div>
+      <div class="stage-meta">
+        <div class="stage-note">系统每 10 分钟查询未收口工具任务进度</div>
+        <button class="stage-toggle" type="button">收起</button>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="flow">
+        <div class="node"><strong>查询服务商进度</strong><small>任务总数 / 完成数 / 状态</small></div>
+        <div class="node"><strong>汇总轮次完成度</strong><small>Σ完成数 ÷ Σ总数</small></div>
+        <div class="node decision"><strong>入口是否关闭？</strong><small>上游完成或到末次投递时间</small></div>
+        <div class="node"><strong>投递剩余待投递池</strong><small>末次投递忽略最小成批数</small></div>
+        <div class="node decision"><strong>完成度达到阈值？</strong><small>入口关闭后判断</small></div>
+        <div class="node success"><strong>轮次完成</strong><small>无有效结果案件阈值截断</small></div>
+      </div>
+      <div class="rule-panel">
+        <button class="rule-toggle" type="button">展开规则说明</button>
+        <div class="rule-detail" hidden>入口关闭但未生成任何工具任务时，轮次标记为空轮次已完成，完成度显示 “--”。</div>
+      </div>
+    </div>
+  </section>
+  <div class="down-arrow">⬇</div>
+
+  <section class="stage">
+    <div class="stage-head">
+      <div class="stage-title"><span class="stage-index">6</span>Group 截止与日切</div>
+      <div class="stage-meta">
+        <div class="stage-note">所有流程仅在当日有效，不跨日继续执行</div>
+        <button class="stage-toggle" type="button">收起</button>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="flow">
+        <div class="node decision"><strong>到达 Group 截止时间</strong><small>关闭当日流转与投递</small></div>
+        <div class="node danger"><strong>未完成流程当日作废</strong><small>迟到结果仅保存</small></div>
+        <div class="node"><strong>暂停未完成外部任务</strong><small>原批次号 + 操作类型幂等</small></div>
+        <div class="node decision"><strong>服务商确认已停止？</strong><small>确认后释放案件占用</small></div>
+        <div class="node warn"><strong>未确认停止则跨日阻断</strong><small>次日查询终态后再释放</small></div>
+        <div class="node success"><strong>次日重新准入</strong><small>未结清且仍命中策略可进入新实例</small></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer-note">正式版：主路径常显；规则说明按需展开；支持全部或逐阶段展开／收起，避免评审时被非主流程信息干扰。</div>
+</div>
+
+<script>
+function setStageCollapsed(stage, collapsed){
+  var btn = stage.querySelector('.stage-toggle');
+  stage.classList.toggle('collapsed', collapsed);
+  if (btn) {
+    btn.textContent = collapsed ? '展开' : '收起';
+    btn.setAttribute('aria-expanded', String(!collapsed));
+  }
+}
+
+function setRuleCollapsed(detail, collapsed){
+  var btn = detail.previousElementSibling;
+  detail.hidden = collapsed;
+  if (btn && btn.classList.contains('rule-toggle')) {
+    btn.textContent = collapsed ? '展开规则说明' : '收起规则说明';
+    btn.setAttribute('aria-expanded', String(!collapsed));
+  }
+}
+
+document.querySelectorAll('.stage-toggle').forEach(function(btn){
+  btn.setAttribute('aria-expanded', String(!btn.closest('.stage').classList.contains('collapsed')));
+  btn.addEventListener('click', function(){
+    var stage = btn.closest('.stage');
+    setStageCollapsed(stage, !stage.classList.contains('collapsed'));
+  });
+});
+document.querySelectorAll('.rule-toggle').forEach(function(btn){
+  btn.setAttribute('aria-expanded', String(!btn.nextElementSibling.hidden));
+  btn.addEventListener('click', function(){
+    var detail = btn.nextElementSibling;
+    setRuleCollapsed(detail, !detail.hidden);
+  });
+});
+document.getElementById('expand-all').addEventListener('click', function(){
+  document.querySelectorAll('.stage').forEach(function(stage){setStageCollapsed(stage, false)});
+  document.querySelectorAll('.rule-detail').forEach(function(detail){setRuleCollapsed(detail, false)});
+});
+document.getElementById('collapse-all').addEventListener('click', function(){
+  document.querySelectorAll('.stage').forEach(function(stage){setStageCollapsed(stage, true)});
+  document.querySelectorAll('.rule-detail').forEach(function(detail){setRuleCollapsed(detail, true)});
+});
+</script>
+
+</body>
+</html>

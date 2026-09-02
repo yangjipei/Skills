@@ -1,0 +1,6 @@
+interface:
+  display_name: "Skill 经验评审与改造"
+  short_description: "手工检查共享 Wiki，筛选值得固化的经验，并在明确授权后做最小 Skill Patch"
+  default_prompt: "使用 $skill-evolution-review 检查共享 Wiki 中与目标 Skill 相关的高价值 Pattern，先只给出 KEEP_IN_WIKI / PROMOTE_TO_SKILL / ALREADY_IN_SKILL / REJECT 建议；未经我明确授权不要修改任何 Skill。"
+policy:
+  allow_implicit_invocation: false

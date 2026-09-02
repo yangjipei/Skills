@@ -1,0 +1,4 @@
+interface:
+  display_name: "需求共创、PRD 与原型生命周期"
+  short_description: "先确认流程图，再管理 PRD、原型、评审、版本与归档"
+  default_prompt: "使用 $prd-requirement-lifecycle 与我共创产品需求，只记录关键决策和待确认问题；共同探讨后先判断流程图清单和数量，使用 $business-flow-html 生成并确认全部流程图，再进入 PRD 编写；页面原型基于最终 PRD 生成到当前需求目录的 prototype/。"
