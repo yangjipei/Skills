@@ -18,7 +18,7 @@ description: 管理正式产品需求的共创、方案确认、PRD、专家评�
 - 同一 Session 内，已读取并仍适用于当前目标的文件、标题索引和章节提取结果必须直接复用；仅在文件已变更、当前目标扩大或已持有内容不足以完成下一动作时，才补读最小必要部分。
 - 归档或从归档重开：读 [workflow-archive.md](references/workflow-archive.md)；重开后仍使用“续作索引”恢复工作。
 - 用户授权生成 PRD 时，运行 `sh .agents/skills/prd-requirement-lifecycle/scripts/create_prd_workdraft.sh <PRD工作稿路径>` 一次生成主 PRD 与独立的 `PRD补充信息-工作稿.md`，不读取骨架正文；再按编写范围读取 [prd-writing-rules.md](references/prd-writing-rules.md) 对应规则。
-- 编写或修订 PRD「4.4 用户角色与权限」时，读取 `00_Context/role-permission-baseline.md`；仅输出本需求涉及的标准角色及其菜单、页面、按钮和操作权限。
+- 编写或修订 PRD「4.4 用户角色与权限」时，读取 `00_Context/role-permission-baseline.md`；仅输出本需求涉及的标准角色及其操作事项或负责内容。
 - 修改已有 PRD 时，先用 `.agents/scripts/markdown_sections.py` 扫描标题索引，再一次批量提取受影响章节并集；已提取章节不因编写、评审或校验分阶段而重读，全文读取条件见 [workflow-prd-review.md](references/workflow-prd-review.md)。
 - 产品流程规划与可视化读取 [business-flow-integration.md](references/business-flow-integration.md)：先判断流程图清单和数量，再生成对应流程图供用户确认；需要 HTML 流程视图时直接使用 `$business-flow-html`，无需用户再次单独指定输出形式。
 
