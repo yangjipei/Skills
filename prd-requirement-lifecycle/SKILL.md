@@ -17,7 +17,7 @@ description: 管理正式产品需求的共创、方案确认、PRD、专家评�
 - 继续进行中需求：只读 `00-需求信息.md` 的“续作索引”，先确定当前目标和下一动作，再按索引定向读取；不因会话重启重读共创、方案、PRD 或评审全文。
 - 同一 Session 内，已读取并仍适用于当前目标的文件、标题索引和章节提取结果必须直接复用；仅在文件已变更、当前目标扩大或已持有内容不足以完成下一动作时，才补读最小必要部分。
 - 归档或从归档重开：读 [workflow-archive.md](references/workflow-archive.md)；重开后仍使用“续作索引”恢复工作。
-- 用户授权生成 PRD 时，运行 `sh .agents/skills/prd-requirement-lifecycle/scripts/create_prd_workdraft.sh <工作稿路径>` 复制骨架，不读取骨架正文；再按编写章节读取 [prd-writing-rules.md](references/prd-writing-rules.md) 对应部分。
+- 用户授权生成 PRD 时，运行 `sh .agents/skills/prd-requirement-lifecycle/scripts/create_prd_workdraft.sh <PRD工作稿路径>` 一次生成主 PRD 与独立的 `PRD补充信息-工作稿.md`，不读取骨架正文；再按编写范围读取 [prd-writing-rules.md](references/prd-writing-rules.md) 对应规则。
 - 修改已有 PRD 时，先用 `.agents/scripts/markdown_sections.py` 扫描标题索引，再一次批量提取受影响章节并集；已提取章节不因编写、评审或校验分阶段而重读，全文读取条件见 [workflow-prd-review.md](references/workflow-prd-review.md)。
 - 产品流程规划与可视化读取 [business-flow-integration.md](references/business-flow-integration.md)：先判断流程图清单和数量，再生成对应流程图供用户确认；需要 HTML 流程视图时直接使用 `$business-flow-html`，无需用户再次单独指定输出形式。
 
@@ -25,8 +25,8 @@ description: 管理正式产品需求的共创、方案确认、PRD、专家评�
 
 1. 探索只询会改变目标、范围、流程、系统职责、核心规则或验收的问题。页面需求必须确认完整路径及新增／修改页面。
 2. 共同探讨消除阻塞问题后，先形成流程图清单，明确总数、每张图的名称、类型、范围和判断依据。每个正式需求至少有一张业务流程图；系统流程图和页面流程图按实际复杂度决定，一类可有多张，不为凑类型或数量拆分。
-3. 按流程图清单生成全部工作稿并逐一交用户确认。流程图暴露定义不足时回到共同探讨，只更新受影响的方案和流程图；所有必需流程图确认完成前不得生成 `PRD-工作稿.md`。
-4. 提交流程图确认时一并说明“确认后即进入 PRD 编写”。用户明确确认全部必需流程图及方案，即视为授权生成 `PRD-工作稿.md`，不再重复询问一次 PRD 授权。
+3. 按流程图清单生成全部工作稿并逐一交用户确认。流程图暴露定义不足时回到共同探讨，只更新受影响的方案和流程图；所有必需流程图确认完成前不得生成 PRD 主文档及其补充信息工作稿。
+4. 提交流程图确认时一并说明“确认后即进入 PRD 编写”。用户明确确认全部必需流程图及方案，即视为授权生成成对的 PRD 主文档与补充信息工作稿，不再重复询问一次 PRD 授权。
 5. 未确认且不能安全推导的内容标为待确认，不写成事实或确定规则。
 
 ## 目标驱动的自更新
