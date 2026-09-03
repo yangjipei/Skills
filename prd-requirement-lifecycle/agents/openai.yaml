@@ -1,4 +1,0 @@
-interface:
-  display_name: "正式需求阶段入口"
-  short_description: "根据当前材料定位所需阶段并按授权路由，支持独立调用与串联"
-  default_prompt: "使用 $prd-requirement-lifecycle 根据当前材料定位所需阶段，只在我指定的范围内调用对应 Skill。"

@@ -176,7 +176,7 @@ prototype/
 生成后必须运行：
 
 ```bash
-python3 .agents/skills/prd-requirement-lifecycle/scripts/validate_prototype_portability.py <本次HTML路径>
+python3 .agents/skills/prd-html-prototype/scripts/validate_prototype_portability.py <本次HTML路径>
 ```
 
 检查不通过时先修复依赖，再进行浏览器校验。

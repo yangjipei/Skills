@@ -5,7 +5,7 @@ description: 独立澄清正式产品需求的范围、关键规则、路径与�
 
 # 正式需求澄清
 
-先读[阶段产物与交接协议](../_shared-requirement-protocol.md)，再按任务读取[建档、澄清与方案确认](../prd-requirement-lifecycle/references/workflow-discovery.md)。
+先读[阶段产物与交接协议](../_shared-requirement-protocol.md)，再按任务读取[建档、澄清与方案确认](references/workflow-discovery.md)。
 
 ## 输入与职责
 

@@ -5,12 +5,12 @@ description: 基于充分且已确认的材料独立编写或修订成对 PRD �
 
 # PRD 编写
 
-先读[阶段产物与交接协议](../_shared-requirement-protocol.md)，再读取[PRD 工作稿与终态交付](../prd-requirement-lifecycle/references/workflow-prd-review.md)的对应部分及按需写作规则。
+先读[阶段产物与交接协议](../_shared-requirement-protocol.md)，再读取[PRD 工作稿与终态交付](references/workflow-prd.md)的对应部分及按需写作规则。
 
 ## 输入与准入
 
 - 接受已确认方案及流程，或用户提供的目标、范围、功能、规则和流程事实。无论保存位置如何，不要求先执行澄清或生成 `02-方案确认.md`。
-- 检查流程图必要性：已有判断时复用，没有时按[流程集成规则](../prd-requirement-lifecycle/references/business-flow-integration.md)判断。仅明确需要的图须确认，不需要时记录原因并用文字定义流程。
+- 检查流程图必要性：已有判断时复用，没有时按[流程集成规则](../business-flow-html/references/business-flow-integration.md)判断。仅明确需要的图须确认，不需要时记录原因并用文字定义流程。
 - 缺少关键事实时只提出最小问题；需要其他阶段产物时说明具体缺口，不要求补跑无关阶段。
 
 ## 执行与交付

@@ -91,12 +91,12 @@ Feedback 不等于 Pattern。只有满足以下任一条件才允许晋升：
 ```markdown
 # Skill Evolution Review
 
-## prd-requirement-lifecycle
+## prd-writing
 
 - Pattern: PRD-001
 - Decision: PROMOTE_TO_SKILL
 - Reason: 高频、跨任务、用户已明确长期确认
-- Suggested Patch: 在“不可破坏的闸门”追加 1 条规则
+- Suggested Patch: 在“输入与准入”中补充已确认的复用规则
 
 ## business-flow-html
 

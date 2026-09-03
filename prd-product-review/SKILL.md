@@ -5,7 +5,7 @@ description: 独立评审用户指定的 PRD 及可用补充信息，输出固�
 
 # PRD 产品专家评审
 
-先读[阶段产物与交接协议](../_shared-requirement-protocol.md)，再读取[专家评审规则](../prd-requirement-lifecycle/references/workflow-prd-review.md)的“专家评审”部分。
+先读[阶段产物与交接协议](../_shared-requirement-protocol.md)，再读取[专家评审规则](references/workflow-review.md)。
 
 ## 输入与产物
 

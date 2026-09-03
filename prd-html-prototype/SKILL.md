@@ -5,7 +5,7 @@ description: 基于用户确认的最终 PRD 独立生成 Prototype Spec 与可�
 
 # PRD HTML 页面原型
 
-先读[阶段产物与交接协议](../_shared-requirement-protocol.md)，再按任务读取[原型生成与校验](../prd-requirement-lifecycle/references/workflow-prototype.md)和[HTML 原型规则](../prd-requirement-lifecycle/references/prototype-html.md)。
+先读[阶段产物与交接协议](../_shared-requirement-protocol.md)，再按任务读取[原型生成与校验](references/workflow-prototype.md)和[HTML 原型规则](references/prototype-html.md)。
 
 ## 输入与产物
 

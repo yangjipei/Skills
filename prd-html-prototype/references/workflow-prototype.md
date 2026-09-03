@@ -32,7 +32,7 @@
 4. CRUD 使用 Drawer，复杂配置使用独立编辑视图，监控使用概览、进度和下钻；
 5. 检查覆盖层层级：弹窗或 Drawer 内只允许继续触发 `confirm` 类型轻量二次确认；若还需展示大量详情、复杂选择或大量结果内容，第一层容器必须为独立页面；确认后的结果优先使用原容器内提示或 Toast；
 6. 检查每个数据列表的分页：主页、子页、弹窗和 Drawer 内的列表均须展示条目范围／总数、上下页、页码／省略号／末页及每页条数选择，默认 10 条／页；
-7. 运行 `python3 .agents/skills/prd-requirement-lifecycle/scripts/validate_prototype_portability.py <HTML 路径>`，确保文件不依赖本机或外部样式、脚本和资源；
+7. 运行 `python3 .agents/skills/prd-html-prototype/scripts/validate_prototype_portability.py <HTML 路径>`，确保文件不依赖本机或外部样式、脚本和资源；
 8. 使用可用的浏览器能力实际打开页面，检查首屏、主要交互、折叠／弹层、分页、控制台错误及常见视口下的溢出；
 9. 发现字段或业务定义缺失、无法映射或冲突时，不在 Spec 或 HTML 中补造，将缺口交给 `prd-writing` 修订并由用户重新确认，再重生成受影响页面；本 Skill 不修改 PRD。
 

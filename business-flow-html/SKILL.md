@@ -35,7 +35,7 @@ description: 将业务流程以及按需确定的系统流程、页面流程转�
 
 ## 运行时最小读取
 
-生成时只读取：
+判断流程图必要性或规划、维护流程清单时，按需读取[流程集成规则](references/business-flow-integration.md)。生成时只读取：
 1. 用户提供的流程图 / PRD 相关章节 / 流程描述；
 2. `references/business-flow-rules.md`；
 3. 新建阶段型流程时，运行 `sh .agents/skills/business-flow-html/scripts/create_flow_workdraft.sh <目标路径>` 复制黄金骨架，不读取完整参考文件；扫描目标 HTML 的结构标记后，只读取和替换正文片段。
