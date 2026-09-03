@@ -1,0 +1,6 @@
+interface:
+  display_name: "PRD HTML 原型"
+  short_description: "从已确认 PRD 独立生成带来源 Spec 与可移植 HTML 页面原型"
+  default_prompt: "使用 $prd-html-prototype 基于这份已确认 PRD 生成页面 Spec 与 HTML，确认后固化当前终态。"
+policy:
+  allow_implicit_invocation: true

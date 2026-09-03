@@ -1,10 +1,10 @@
 # operation-manual-generator
 
-将已上线需求目录中的多份定稿 Markdown 产品文档，生成 HTML 培训操作手册。
+根据指定的一份或多份定稿 Markdown 生成 HTML 操作手册。支持独立调用和读取上游有效 PRD；已上线手册须确认实际上线范围。
 
-## 推荐目录结构
+## 兼容目录结构
 
-无需 YAML 或其他配置文件，目录本身就是配置：
+既有资料可以继续使用以下结构；直接提供文件时不必转换目录：
 
 ```text
 08_已上线需求/
@@ -23,70 +23,36 @@
 - `output/`：最终 HTML。
 - `.localized.md`、图片报告、`images/`：派生产物，不作为第二份事实源重复分析。
 
-## 核心流程
-
-需求目录 → 扫描 Primary / Reference → 批量本地化 Primary 图片 → Primary 操作事实提取 → 合并轻量 Fact Inventory → 冲突检查 → 必要时按需读取 Reference → 场景编排 → 操作步骤 → 截图挂载 → HTML
-
-## Token 原则
-
-核心是“最小充分读取”：
-
-- 先看目录、manifest、文件名和标题，不直接全文读所有资料。
-- Primary 每份只深读一次，只提取操作事实。
-- Reference 默认不深读。
-- 成功生成 `.localized.md` 后，不再重复读取对应原始 Markdown。
-- 有语雀 OCR 注释时优先使用 OCR 做截图定位，不重复视觉识图。
-- Fact Inventory 建立后，后续不再全文扫描 Primary。
-- Manifest 保存完整标题行号索引；使用 `.agents/scripts/markdown_sections.py` 一次批量提取任务所需章节。
-- Fact Inventory 记录文件 hash、已读行号与 `consumed` 状态，后续不回读已消费范围。
-- 不生成不会直接影响最终 HTML 的中间长文档。
-
-## 目录级预处理（推荐）
+## 直接指定事实源
 
 ```bash
 python3 scripts/prepare_requirement_directory.py \
-"/path/to/08_已上线需求/预测式外呼系统"
+  --primary '/path/to/PRD.md' \
+  --primary '/path/to/补充信息.md' \
+  --reference '/path/to/参考资料.md' \
+  --output-dir '/path/to/08_已上线需求/需求名称/output'
 ```
 
-脚本会：
+单文件可直接作为位置参数，或使用一次 `--primary`；没有参考资料时省略 `--reference`。调用脚本前由使用者确认事实源及上线范围，脚本不自动判定。
 
-1. 扫描 `primary/` 原始 Markdown。
-2. 只对含远程图片的 Primary 做图片本地化。
-3. 仅轻量登记 `reference/`（文件名、hash、标题等），不深度解析。
-4. 忽略 `.localized.md`、图片报告和 output 等派生产物。
-5. 生成：
-
-```text
-.operation-manual-manifest.json
-```
-
-这个 manifest 用于后续快速确定应该读取哪些文件，避免重复扫描。
-
-## 单文件图片预处理
+原目录模式保持兼容：
 
 ```bash
-python3 scripts/preprocess_yuque_markdown.py \
-"/path/to/产品文档.md" \
---domain cdn.nlark.com
+python3 scripts/prepare_requirement_directory.py '/path/to/已上线需求目录'
 ```
 
-默认生成：
+显式文件模式的 manifest 默认在输出目录，传统模式默认在需求根；以脚本返回路径为准。含远程图片时在源文件旁生成 `.localized.md`、`images/` 与报告，不修改原始文件，也不把派生文件重新作为 Primary。新 manifest 提供原始与有效文本的 SHA256，标题索引对应实际消费的 `effective_path`。
 
-- `产品文档.localized.md`
-- `images/`
-- `产品文档.localized.md.image-report.json`
+## 最小读取与交付
 
-语雀图片下载支持：
+先读 manifest，按标题一次提取必要章节，建立 `fact-inventory.yaml` 后生成手册；Reference 仅按需读取。通过来源范围与 consumed 标记避免反复回读。
 
-- CDN 域名预检
-- `User-Agent`
-- `Referer: https://www.yuque.com/`
-- DNS / timeout / 403 / 404 / network error 分类
-- 下载失败保留原 URL
+默认交付位置为 `08_已上线需求/<需求名称>/output/`，允许指定其他目录。归档不等于上线，已归档 PRD 可作为来源，但不能代替上线范围确认。
 
-## Skill 文件
+## 文件
 
-- `SKILL.md`：完整执行规范
-- `scripts/prepare_requirement_directory.py`：需求目录扫描 + Primary 批量图片预处理 + manifest
-- `scripts/preprocess_yuque_markdown.py`：单 Markdown 图片本地化
-- `templates/manual-template.html`：默认 HTML 页面骨架
+- `SKILL.md`：输入、事实提取、截图与交付规范。
+- `scripts/prepare_requirement_directory.py`：单文件、多文件或目录预处理与来源 manifest。
+- `scripts/preprocess_yuque_markdown.py`：图片本地化，失败保留远程 URL 并记录原因。
+- `templates/manual-template.html`：HTML 骨架。
+- `tests/test_prepare_requirement_directory.py`：输入模式、来源索引与兼容性检查。

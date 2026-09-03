@@ -19,7 +19,7 @@
 ## 2. Prototype Spec
 
 每个主页面生成一份：
-`<当前需求目录>/prototype/spec/<page-slug>.md`
+`<产物根目录>/prototype/workdraft/spec/<page-slug>.md`；用户确认后与 HTML 同步固化到 `prototype/spec/`。
 
 只写 HTML 真正需要的信息：
 
@@ -70,7 +70,7 @@
 - 同一轮多页原型先一次性生成全部 Spec，再进入逐页 HTML 生成；不得在生成每个页面时回读同一 PRD；
 - 每条用短语或一句话；
 - 业务规则只保留会影响页面字段、状态、交互、校验和权限的部分；
-- Query、List、Form、Detail 中每个字段都必须出现在 `Field Definitions`，并能映射到 PRD 的逐字段定义；无法映射时停止生成并回补 PRD；
+- Query、List、Form、Detail 中每个字段都必须出现在 `Field Definitions`，并能映射到 PRD 的逐字段定义；无法映射时停止受影响生成，将缺口交给 `prd-writing` 回补 PRD；
 - `Field Definitions` 用于覆盖校验，不要求把每条字段说明都显示在 HTML 中；仅在用户操作需要理解或避免误用时展示帮助文案、占位提示或 Tooltip；
 - 自动任务、接口、指标、风险等不影响页面表达时不要放入 Spec。
 
@@ -128,7 +128,7 @@ Reference：
 
 在 Prototype Spec 完成后，HTML 生成阶段只允许读取：
 
-1. 当前页面的 `prototype/spec/<page-slug>.md`
+1. 当前页面的 Prototype Spec（编辑工作稿时位于 `prototype/workdraft/spec/`，检查终态时位于 `prototype/spec/`）
 2. `07_Prototype_Base_Styles/prototype.rules.md`
 3. `07_Prototype_Base_Styles/assets/base.css`
 4. 当前页面 Mode 对应的 **一个** Reference
@@ -160,7 +160,7 @@ Reference：
 
 ## 6. 输出路径
 
-必须输出到当前需求文件夹：
+产物根为当前需求目录或用户指定目录。工作稿位于 `prototype/workdraft/` 及其 `spec/`；用户确认后同步固化为：
 
 ```text
 prototype/
@@ -169,14 +169,14 @@ prototype/
 └── <page-slug>.html
 ```
 
-禁止输出到工作区根目录或 `07_Prototype_Base_Styles`。
+不把产物直接散放在工作区根目录或写入 `07_Prototype_Base_Styles`；目录外独立调用允许用户指定其他产物根。
 
 每个 `<page-slug>.html` 都是独立、可复制的单文件交付物。只把该 HTML 发给另一台电脑，也必须保持完整样式和主要交互，无需同时复制 `07_Prototype_Base_Styles` 或其他资源目录。
 
 生成后必须运行：
 
 ```bash
-python3 .agents/skills/prd-requirement-lifecycle/scripts/validate_prototype_portability.py <prototype/page-slug.html>
+python3 .agents/skills/prd-requirement-lifecycle/scripts/validate_prototype_portability.py <本次HTML路径>
 ```
 
 检查不通过时先修复依赖，再进行浏览器校验。

@@ -1,11 +1,11 @@
 ---
 name: operation-manual-generator
-description: 基于需求目录中的多份定稿 Markdown 主文档（primary）与按需参考资料（reference），以最小充分读取方式提取操作事实，自动本地化语雀图片并生成 HTML 培训操作手册。强调事实约束、低 Token 消耗、冲突确认和截图挂载。
+description: 基于用户指定的单份或多份定稿文档独立生成 HTML 操作手册，也可读取上游有效 PRD；不强制转换目录，区分事实源、参考资料与实际上线范围。
 ---
 
 # Operation Manual Generator
 
-将一个已上线需求目录中的定稿产品事实，转为面向业务用户、运营、管理员或一线坐席的可执行 HTML 操作手册。不改写 PRD，不推测未定义的产品逻辑。
+将指定的定稿产品事实转为面向业务用户、运营、管理员或一线坐席的可执行 HTML 操作手册。先读[阶段产物与交接协议](../_shared-requirement-protocol.md)，独立调用完成本阶段即交付；不改写 PRD，不推测未定义的产品逻辑。
 
 ## 不可破坏的原则
 
@@ -14,32 +14,41 @@ description: 基于需求目录中的多份定稿 Markdown 主文档（primary�
 3. 源文档的处理单位是“章节集合”，不是整篇文件。同一内容在一轮任务中只进入模型上下文一次。
 4. 先形成轻量 Fact Inventory，再编排场景、生成 HTML 和校验；Inventory 完成后不回读 Primary。
 
-## 目录边界
+## 输入与输出
 
-默认一次只处理 `08_已上线需求/` 下一个能唯一定位的需求目录：
-
-```text
-<requirement>/
-├── primary/      # 多份定稿事实源
-├── reference/    # 按需参考
-└── output/       # 最终产物
-```
-
-`.localized.md`、图片报告、`images/` 和 `output/` 是派生产物，不得再当作事实源。单文件任务也使用下述索引与单次提取协议。
+- **独立调用**：接受用户指定且已确认可作手册事实源的一份或多份 Markdown，不要求先建档、编写 PRD 或归档。
+- **串联调用**：从续作索引定位有效 PRD、补充信息和必要参考资料，直接使用原路径，不搬运或复制成另一套原始文档。
+- Primary 表示权威事实源，Reference 表示按需参考，是输入角色，不是必须建立的目录。保留原有 `primary/`、`reference/` 目录模式兼容既有材料。
+- 已上线系统手册须确认实际上线范围与指定文档一致；已有明确确认直接复用。归档日期或文件名不能作为上线证明；上线差异影响步骤时先确认。
+- 默认输出到 `08_已上线需求/<已确认需求名称>/output/`，也接受用户指定位置。名称或位置不能确定时只补问缺项。将输出位置显式传给预处理脚本。
+- `.localized.md`、图片报告、`images/`、manifest 和 output 为派生产物，不再作为第二份事实源。
 
 ## 源文档单次读取协议
 
 ### 1. 预处理与索引
 
-先运行：
+直接指定来源，无需转换目录：
 
 ```bash
-python3 .agents/skills/operation-manual-generator/scripts/prepare_requirement_directory.py <需求目录>
+python3 .agents/skills/operation-manual-generator/scripts/prepare_requirement_directory.py \
+  --primary '<当前PRD路径>' \
+  --primary '<配套补充信息路径>' \
+  --reference '<按需参考路径>' \
+  --output-dir '08_已上线需求/<需求名称>/output'
 ```
 
-只读 `.operation-manual-manifest.json`。Manifest 已包含文件 hash、有效路径和完整 `heading_index` 行号范围；不要再为获取目录或标题扫描 Markdown 正文。
+`--primary`、`--reference` 可重复，未提供参考时省略 `--reference`。单文件也可作为位置参数：
 
-有远程图片时，后续只使用 manifest 中的 `effective_path`，不再读对应原始 Markdown。
+```bash
+python3 .agents/skills/operation-manual-generator/scripts/prepare_requirement_directory.py \
+  '<定稿文档.md>' --output-dir '<输出目录>'
+```
+
+兼容既有目录：`python3 .agents/skills/operation-manual-generator/scripts/prepare_requirement_directory.py <需求目录>`。
+
+只读取脚本返回的 manifest。指定文件模式默认位于输出目录，传统目录模式默认位于需求根；不要自行假定路径。Primary 记录包含原始来源 `source_path`、`source_sha256`、`effective_path`、有效文本的 `sha256` 和 `heading_index`；Reference 使用 `path`、`sha256` 和 `heading_index` 按需读取，不再扫描正文获取标题。该脚本只准备输入，不判断文档是否已确认或实际上线。
+
+含远程图片时，沿用图片本地化流程，在源文件旁生成派生 Markdown、图片及报告，不改原文；后续只消费 `effective_path`，不同时读取原文。记录本地化失败，不能把失败当作图片已齐全。
 
 ### 2. 一次批量提取
 
@@ -71,7 +80,7 @@ Reference 只在 Primary 无法解释、Primary 明确引用、用户点名或�
 
 ## Fact Inventory
 
-只记录最终手册会使用的操作事实：
+将最终手册会使用的操作事实保存到输出目录的 `fact-inventory.yaml`，包括前述 sources 与 consumed 范围；不保存无关全文：
 
 ```yaml
 - id: F01
@@ -105,9 +114,9 @@ Reference 只在 Primary 无法解释、Primary 明确引用、用户点名或�
 
 ## HTML 交付与检查
 
-生成完整、可直接打开的单文件 HTML，保存到 `<requirement>/output/`。仅在进入 HTML 生成时读取 `templates/manual-template.html`，内嵌必要 CSS，不依赖外部 CSS 或 JS。文档包含说明、整体流程和各场景；FAQ 或异常处理只在 Inventory 有事实时生成。
+生成完整、可直接打开的单文件 HTML，保存到本次确定的输出目录。仅在进入 HTML 生成时读取 `templates/manual-template.html`，内嵌必要 CSS，不依赖外部 CSS 或 JS。文档包含说明、整体流程和各场景；FAQ 或异常处理只在 Inventory 有事实时生成。
 
-不回读 Primary，直接对照 Inventory 检查：所有产品事实有来源；场景无跳步；图片路径可用并就近挂载；一名未参与产品设计但具备基本业务知识的用户能按手册完成已定义操作。
+完成后在交付说明中列明事实源、上线范围确认情况、未决项和输出路径，不自动启动其他阶段。不回读 Primary，直接对照 Inventory 检查：所有产品事实有来源；场景无跳步；图片路径可用并就近挂载；一名未参与产品设计但具备基本业务知识的用户能按手册完成已定义操作。
 
 ## 轻量经验学习
 
