@@ -1,5 +1,5 @@
 interface:
-  display_name: "正式需求澄清"
+  display_name: "02-正式需求澄清"
   short_description: "独立澄清范围、规则与路径，判断必要流程并按目标交付需求基线"
   default_prompt: "使用 $requirement-clarification 澄清这项正式需求，记录关键决策、阻塞问题和流程图必要性，完成本阶段后交付。"
 policy:

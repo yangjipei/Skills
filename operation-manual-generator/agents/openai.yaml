@@ -1,0 +1,3 @@
+interface:
+  display_name: "08-操作手册生成"
+  short_description: "基于指定定稿文档生成 HTML 操作手册，区分事实源、参考资料与实际上线范围"

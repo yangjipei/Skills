@@ -1,5 +1,5 @@
 interface:
-  display_name: "PRD 编写"
+  display_name: "04-PRD 编写"
   short_description: "基于充分确认材料独立编写成对 PRD，也可读取上游方案与必要流程"
   default_prompt: "使用 $prd-writing 根据已确认材料生成或修订 PRD 与补充信息，不要求补走前序阶段。"
 policy:

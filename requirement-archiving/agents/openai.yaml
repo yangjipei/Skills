@@ -1,5 +1,5 @@
 interface:
-  display_name: "需求归档与重开"
+  display_name: "07-需求归档与重开"
   short_description: "归档已确认结果集，保留有效成果、评审结论与原始参考资料"
   default_prompt: "使用 $requirement-archiving 归档指定有效结果集，如实记录阶段状态；清理材料前列明影响并单独确认。"
 policy:

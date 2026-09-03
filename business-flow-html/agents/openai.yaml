@@ -1,5 +1,5 @@
 interface:
-  display_name: "产品流程 HTML"
+  display_name: "03-产品流程 HTML"
   short_description: "按需把业务、系统或页面流程转换为可独立交付的单文件 HTML"
   default_prompt: "使用 $business-flow-html 根据已确认流程事实生成 HTML，维护流程清单与确认状态，完成本阶段后交付。"
 policy:
