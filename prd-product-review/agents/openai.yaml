@@ -1,6 +1,6 @@
 interface:
-  display_name: "05-PRD 产品专家评审"
-  short_description: "独立评审指定 PRD，记录适用基线、产品问题及必要复审结论"
-  default_prompt: "使用 $prd-product-review 评审指定 PRD 及可用补充信息，输出带基线的 P0/P1/P2 问题与结论。"
+  display_name: "06-PRD 产品专家评审"
+  short_description: "评审当前 PRD 的目标、场景、流程、规则、页面契约与可验收性，按责任阶段最小回退"
+  default_prompt: "使用 $prd-product-review 评审指定 PRD 与补充信息，输出当前基线的 P0/P1/P2；只在发现具体冲突时增量读取相关上游 Spec，不重读整条链路。"
 policy:
   allow_implicit_invocation: true

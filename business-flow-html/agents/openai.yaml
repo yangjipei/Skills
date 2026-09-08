@@ -1,6 +1,6 @@
 interface:
   display_name: "03-产品流程 HTML"
-  short_description: "按需把业务、系统或页面流程转换为可独立交付的单文件 HTML"
-  default_prompt: "使用 $business-flow-html 根据已确认流程事实生成 HTML，维护流程清单与确认状态，完成本阶段后交付。"
+  short_description: "用低成本 HTML 验证业务/系统流程，并在 Page IA 后按需验证页面流程"
+  default_prompt: "使用 $business-flow-html 根据当前最小流程事实生成目标 Flow Type 的 HTML；先压缩 Flow Spec，再生成和校验，不补造规则。"
 policy:
   allow_implicit_invocation: true

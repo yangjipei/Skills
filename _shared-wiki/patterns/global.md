@@ -8,6 +8,6 @@
 
 ## G-003 大文档单次消费
 status: promoted
-scope: prd-requirement-lifecycle, operation-manual-generator
+scope: requirement-analysis, prd-html-prototype, prd-writing, operation-manual-generator
 
-先建标题行号索引，一次批量提取当前阶段所需章节；形成 Fact Inventory 或 Spec 后，后续阶段不回读已消费源内容。
+先建标题行号索引，一次批量提取当前阶段所需章节；形成 Fact Inventory、Flow Spec、Prototype Spec 或其他稳定中间产物后，后续阶段不回读已消费源内容。

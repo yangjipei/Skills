@@ -1,39 +1,156 @@
-# HTML 页面原型生成与校验
+# 页面 IA、原型与 Delta 工作流
 
-仅在用户明确需要页面原型且已确认当前 PRD 可作为页面基线时读取；可独立接收外部 PRD，不要求先执行任何其他阶段。
+仅在页面结构设计、Page Spec、HTML 生成或既有原型局部修改时读取。
 
-## 1. 生成
+## 1. 页面事实一次消费
 
-1. 在已有需求信息中更新本阶段状态；目录外独立任务不强制创建需求档案。
-2. 运行 `python3 .agents/scripts/markdown_sections.py <最终PRD>` 获取标题、行号范围和 SHA256，不把全文输入模型。
-3. 先确定本次所有主页面及其所需章节；一个菜单路径对应一个主页面，不把多个独立菜单合并进同一 HTML。
-4. 用一次命令的多个 `--select` 批量提取所有页面需要的章节并合并重叠范围。读取集合限于功能描述、界面结构、字段定义、业务规则，以及必要的适用范围、权限、术语和验收。
-5. 在同一次源文档理解中，按 [prototype-html.md](prototype-html.md) 为本次所有页面生成 Prototype Spec。Spec 必须记录 PRD SHA256 和来源行号范围。
-6. 以当前需求目录或用户指定目录为产物根，先输出工作稿：
-   - `prototype/workdraft/<page-slug>.html`
-   - `prototype/workdraft/spec/<page-slug>.md`
-   用户确认后成对固化到 `prototype/<page-slug>.html` 和 `prototype/spec/<page-slug>.md`；再次确认前保留旧终态。
-7. 不把业务字段、业务 CSS 或页面产物写回 `07_Prototype_Base_Styles`。
-8. 将基础 CSS、页面 CSS 和页面所需 JavaScript 全部内嵌到 HTML；不得通过 `<link>` 或 `<script src>` 引用工作区文件。
+优先从以下压缩输入获取页面事实：
 
-源文档读取闸门：
+1. 相关 S/F/D + Product Skeleton；
+2. 已确认 Flow Spec；
+3. 用户明确提供的页面材料；
+4. 外部 PRD 的局部页面章节（仅独立原型任务）。
 
-- Spec 齐全且 SHA256 与当前 PRD 一致时，HTML 生成和校验阶段不得再读 PRD。
-- 只有 Spec 明确缺少某个业务定义时，才先通过标题索引定位，增量提取该章节一次，然后更新受影响 Spec。
-- PRD SHA256 变化时，只重建受变更章节影响的 Spec；不因其中一页变化重读全文或重建全部页面。
+先确定本轮全部目标页面和所需来源章节，再一次批量提取。形成 Page IA / Spec 后，HTML 阶段不回读原始需求全文。
 
-## 2. 校验与回补
+## 2. Page IA
 
-生成后不重新读取完整 PRD，检查：
+工作稿：`prototype/workdraft/page-ia.md`。
 
-1. 页面路径、字段、表格列、状态和操作覆盖 Prototype Spec，Prototype Spec 中每个界面字段都能映射到 PRD 字段定义；
-2. Flexi Base 壳层及基础组件视觉一致；
-3. 没有新增 PRD 未定义的页面、导航、统计卡或业务能力；
-4. CRUD 使用 Drawer，复杂配置使用独立编辑视图，监控使用概览、进度和下钻；
-5. 检查覆盖层层级：弹窗或 Drawer 内只允许继续触发 `confirm` 类型轻量二次确认；若还需展示大量详情、复杂选择或大量结果内容，第一层容器必须为独立页面；确认后的结果优先使用原容器内提示或 Toast；
-6. 检查每个数据列表的分页：主页、子页、弹窗和 Drawer 内的列表均须展示条目范围／总数、上下页、页码／省略号／末页及每页条数选择，默认 10 条／页；
-7. 运行 `python3 .agents/skills/prd-html-prototype/scripts/validate_prototype_portability.py <HTML 路径>`，确保文件不依赖本机或外部样式、脚本和资源；
-8. 使用可用的浏览器能力实际打开页面，检查首屏、主要交互、折叠／弹层、分页、控制台错误及常见视口下的溢出；
-9. 发现字段或业务定义缺失、无法映射或冲突时，不在 Spec 或 HTML 中补造，将缺口交给 `prd-writing` 修订并由用户重新确认，再重生成受影响页面；本 Skill 不修改 PRD。
+```markdown
+# Page IA
 
-用户确认后成对固化本次 Spec 与 HTML，更新本阶段状态及有效路径；独立调用即交付，不自动进入归档。仅在已有串联授权时继续下一阶段；PRD 引用交给 `prd-writing` 维护，清理工作稿或旧版本前单独确认。
+## 页面清单
+| Page ID | 页面 / 路径 | 目的 | 角色 | 覆盖场景 | 建设方式 | 状态 |
+| --- | --- | --- | --- | --- | --- | --- |
+| P001 | ... | ... | ... | S001 | 新增/修改/复用 | Draft |
+
+## P001 页面模块
+| Module ID | 模块 | 目的 | 核心信息 / 操作 | 来源 | 状态 |
+| --- | --- | --- | --- | --- | --- |
+| M001 | ... | ... | ... | S001,D002 | EDITABLE |
+
+## 页面流程判断
+| Page / Task | 是否需要 Page Flow | 原因 | 涉及 P/M |
+| --- | --- | --- | --- |
+```
+
+IA 只确定页面与模块层级，不把完整字段定义塞进一张总表。
+
+## 3. Prototype Spec
+
+每页：`prototype/workdraft/spec/<page-slug>.md`。
+
+```markdown
+# Prototype Spec
+
+## Page
+- Page ID: P001
+- Name:
+- Path:
+- Mode: crud | complex-config | monitor | workspace
+- Source: Sxxx / Fxxx / Dxxx / Flow
+
+## Modules
+### M001 模块名称
+- Status: EDITABLE | LOCKED
+- Purpose:
+- Source:
+- Main Content:
+- Actions:
+- State / Feedback:
+
+## Query / List / Form / Detail
+- ...
+
+## Field Definitions
+| Field | Definition | UI use | Source type | Source |
+| --- | --- | --- | --- | --- |
+| ... | ... | ... | FACT / DECISION / FLOW / UI-DERIVED | F001 |
+
+## Interaction
+- ...
+
+## Permission
+- ...
+
+## Page Flow
+- Required: Yes / No
+- Flow path:
+
+## Open Issues
+- ...
+```
+
+`UI-DERIVED` 只允许表示不改变业务口径的布局、分组、展示方式、通用交互。以下内容缺失时不得标为 UI-DERIVED：权限、账务、状态转换、真实枚举 / 码值、核心资格、重要校验、数据来源。
+
+## 4. Page Flow Gate
+
+以下情况才要求页面流程：
+
+- 多页面 / 多步骤任务；
+- 页面、Drawer、Modal 之间存在关键顺序；
+- 不同状态导致不同路径；
+- 存在失败恢复 / 重试；
+- 多角色页面路径明显不同。
+
+需要时交给 `business-flow-html`：目标 Pxxx + Mxxx + 入口 + 操作 + 反馈 + 相关 S/F/D。
+
+必要 Page Flow 未确认前，不进入完整 HTML 交互生成；简单单页记录 No 后直接继续。
+
+## 5. HTML Gate 与最小读取
+
+当 Page Spec 足够后，HTML 阶段只允许读取：
+
+1. 当前页面 Spec；
+2. `07_Prototype_Base_Styles/prototype.rules.md`；
+3. `07_Prototype_Base_Styles/assets/base.css`；
+4. 当前页面模式对应 **1 个** Reference；
+5. 页面确需公共脚本时对应的最小脚本。
+
+禁止再次读取完整需求分析、完整流程、完整 PRD 或其他 Reference。
+
+## 6. 生成与模块锚点
+
+HTML 每个 Mxxx 必须带：
+
+```html
+<!-- MODULE:M001 START -->
+<section data-module-id="M001">...</section>
+<!-- MODULE:M001 END -->
+```
+
+模块 ID 与 Spec 一致。全局 Shell 不作为业务 Mxxx 反复编号。
+
+## 7. Delta 迭代
+
+用户提出修改时：
+
+1. 先把反馈映射到 Pxxx / Mxxx；
+2. 判断是否改变 S/F/D / Flow：若改变，先回责任 Skill；
+3. 只读取受影响 Mxxx 的 Spec；
+4. 通过 HTML 注释锚点定位并读取对应片段；
+5. Patch Spec + HTML 片段；
+6. 只重测受影响交互，除非改动 Shell / 全局布局；
+7. 用户确认后将 Mxxx 标记 LOCKED。
+
+示例：
+
+```text
+LOCKED: M001, M002, M005
+EDITABLE: M003, M004
+本轮 Delta: P001/M003
+```
+
+“再整体优化一下”如果没有明确全局意图，默认只针对当前 EDITABLE 模块，不解锁已经确认模块。
+
+## 8. 固化与 PRD 交接
+
+页面整体确认后同步固化：
+
+- `prototype/page-ia.md`
+- `prototype/spec/<page>.md`
+- `prototype/<page>.html`
+- `prototype/原型清单.md`
+
+交给 `prd-writing` 的事实源是 Page IA / Spec + 原型链接；HTML 只作为视觉参考。这样 PRD 无需重读 HTML 反推字段和交互。

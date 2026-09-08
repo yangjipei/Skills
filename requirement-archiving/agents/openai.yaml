@@ -1,6 +1,6 @@
 interface:
   display_name: "07-需求归档与重开"
-  short_description: "归档已确认结果集，保留有效成果、评审结论与原始参考资料"
-  default_prompt: "使用 $requirement-archiving 归档指定有效结果集，如实记录阶段状态；清理材料前列明影响并单独确认。"
+  short_description: "按实际链路归档需求分析、流程、原型、PRD 与评审基线，重开时只读取受影响部分"
+  default_prompt: "使用 $requirement-archiving 归档或重开指定结果集，如实记录实际阶段；重开时按 S/P/M/章节最小读取，不补跑无关阶段。"
 policy:
   allow_implicit_invocation: true

@@ -1,0 +1,6 @@
+interface:
+  display_name: "02-需求分析"
+  short_description: "从事实与业务场景发现真实需求，收敛目标、范围、规则与产品能力骨架"
+  default_prompt: "使用 $requirement-analysis 分析这项正式需求。先建立 Fact Inventory，再主动挖掘会改变方案的核心场景与关键分支，收敛 Problem / Goal、Scope、Core Rules 和 Product Skeleton；只询问阻塞问题，最后给出业务/系统流程的最小交接输入。"
+policy:
+  allow_implicit_invocation: true

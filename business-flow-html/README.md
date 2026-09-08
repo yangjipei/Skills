@@ -1,18 +1,15 @@
 # Business Flow HTML Skill
 
-基于最终确认的第三版 HTML 设计沉淀。
+用于在高成本 HTML 页面原型之前，先以较低成本验证流程逻辑；也可在 Page IA 稳定后按需生成页面流程。
 
-适合：
-- 复杂业务流程
-- 多轮策略流转
-- 状态流转
-- 规则密集型流程
-- 传统 Mermaid/SVG 连线过多、跨区回流严重的场景
+支持：
+
+- Business Flow：需求分析后验证业务主线；
+- System Flow：复杂系统协作时按需；
+- Page Flow：Page IA / Page Spec 后按需。
 
 核心设计：
-`阶段分组 + 关键箭头 + 局部 Yes/No + 规则折叠`
 
-业务流程统一输出到需求目录的 `flows/`；页面原型继续使用 `prototype/`。
+`阶段分组 + 主流程常显 + 关键箭头 + 局部 Yes/No + 规则折叠 + 全部展开/收起`
 
-建议不要并入 `07_Prototype_Base_Styles`。
-它属于“业务流程可视化”，与后台页面原型是两套不同能力。
+流程统一输出 `flows/`；页面原型输出 `prototype/`。

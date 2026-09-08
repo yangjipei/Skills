@@ -1,6 +1,6 @@
 interface:
-  display_name: "04-PRD 编写"
-  short_description: "基于充分确认材料独立编写成对 PRD，也可读取上游方案与必要流程"
-  default_prompt: "使用 $prd-writing 根据已确认材料生成或修订 PRD 与补充信息，不要求补走前序阶段。"
+  display_name: "05-PRD 编译与定稿"
+  short_description: "把已确认需求分析、流程与页面 Spec 编译成可执行 PRD，不重新设计需求"
+  default_prompt: "使用 $prd-writing 将当前已确认需求分析、必要流程、Page IA / Prototype Spec 和原型链接编译为 PRD 与补充信息；不要重新设计产品，缺口按责任阶段最小回退。"
 policy:
   allow_implicit_invocation: true
